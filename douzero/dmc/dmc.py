@@ -5,6 +5,7 @@ import timeit
 import pprint
 from collections import deque
 import numpy as np
+import requests
 
 import torch
 from torch import multiprocessing as mp
@@ -191,25 +192,47 @@ def train(flags):
                 thread.start()
                 threads.append(thread)
     
+    def upload_model_file(file_path, filename):
+        """上传模型文件到指定服务器"""
+        try:
+            url = "http://47.98.192.59:8008/upload"
+            with open(file_path, 'rb') as f:
+                files = {'file': (filename, f)}
+                response = requests.post(url, files=files)
+                
+            if response.status_code == 200:
+                log.info(f'模型文件 {filename} 上传成功')
+            else:
+                log.error(f'模型文件 {filename} 上传失败: {response.text}')
+        except Exception as e:
+            log.error(f'上传过程发生错误: {str(e)}')
+
     def checkpoint(frames):
         if flags.disable_checkpoint:
             return
         log.info('Saving checkpoint to %s', checkpointpath)
         _models = learner_model.get_models()
-        torch.save({
+        
+        # 保存checkpoint文件
+        checkpoint_state = {
             'model_state_dict': {k: _models[k].state_dict() for k in _models},
             'optimizer_state_dict': {k: optimizers[k].state_dict() for k in optimizers},
             "stats": stats,
             'flags': vars(flags),
             'frames': frames,
             'position_frames': position_frames
-        }, checkpointpath)
+        }
+        torch.save(checkpoint_state, checkpointpath)
+        
+        # 上传checkpoint文件
+        upload_model_file(checkpointpath, f'model_{frames}.tar')
 
-        # Save the weights for evaluation purpose
+        # 保存并上传各个位置的权重文件
         for position in ['landlord', 'farmer']:
             model_weights_dir = os.path.expandvars(os.path.expanduser(
                 '%s/%s/%s' % (flags.savedir, flags.xpid, position+'_weights_'+str(frames)+'.ckpt')))
             torch.save(learner_model.get_model(position).state_dict(), model_weights_dir)
+            
 
     fps_log = []
     timer = timeit.default_timer
