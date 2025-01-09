@@ -69,6 +69,7 @@ def train(flags):
     if not flags.actor_device_cpu or flags.training_device != 'cpu':
         if not torch.cuda.is_available():
             raise AssertionError("CUDA not available. If you have GPUs, please specify the ID after `--gpu_devices`. Otherwise, please train with CPU with `python3 train.py --actor_device_cpu --training_device cpu`")
+        
     plogger = FileWriter(
         xpid=flags.xpid,
         xp_args=flags.__dict__,

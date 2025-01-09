@@ -107,7 +107,7 @@ class GameEnv(object):
 
         self.last_move_dict[
             self.acting_player_position] = action.copy()
-
+        print(f"{self.acting_player_position} 当前手牌：{self.info_sets[self.acting_player_position].player_hand_cards} \n 出牌: {action}")
         self.card_play_action_seq.append(action)
         self.update_acting_player_hand_cards(action)
 
@@ -358,4 +358,31 @@ class InfoSet(object):
         # 地主让牌张数
         self.give_up_num = None
         
+
+    @staticmethod
+    def from_dict(data):
+        """
+        将字典转换为 InfoSet 实例
+        Args:
+            data (dict): 包含 InfoSet 属性的字典
+        Returns:
+            InfoSet: 新的 InfoSet 实例
+        """
+        info_set = InfoSet(data.get('player_position'))
+        info_set.player_hand_cards = data.get('player_hand_cards')
+        info_set.num_cards_left_dict = data.get('num_cards_left_dict')
+        info_set.three_landlord_cards = data.get('three_landlord_cards')
+        info_set.card_play_action_seq = data.get('card_play_action_seq')
+        info_set.other_hand_cards = data.get('other_hand_cards')
+        info_set.legal_actions = data.get('legal_actions')
+        info_set.last_move = data.get('last_move')
+        info_set.last_two_moves = data.get('last_two_moves')
+        info_set.last_move_dict = data.get('last_move_dict')
+        info_set.played_cards = data.get('played_cards')
+        info_set.all_handcards = data.get('all_handcards')
+        info_set.last_pid = data.get('last_pid')
+        info_set.bomb_num = data.get('bomb_num')
+        info_set.give_up_num = data.get('give_up_num')
+        return info_set
+
 

@@ -1,0 +1,19 @@
+{
+    "init_card": "578999TJQQKKKAA22",
+    "current_hand": "578999TJQQKKKAA22",
+    "opponent_hands": "",
+    "fundcards": "56T",
+    "other_hands": "",
+    "current_multiplier": 1,
+    "self_seat": 1,
+    "landlord_seat": 0,
+    "pk_status": 2,
+    "self_win_card_num": 1,
+    "oppo_win_card_num": 0,
+    "playables": [
+      {
+        "cards": "5",
+        "seat": 0
+      }
+    ]
+  }

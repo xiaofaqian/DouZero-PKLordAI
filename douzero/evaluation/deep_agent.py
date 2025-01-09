@@ -27,7 +27,6 @@ class DeepAgent:
     def act(self, infoset):
         if len(infoset.legal_actions) == 1:
             return infoset.legal_actions[0]
-
         obs = get_obs(infoset) 
 
         z_batch = torch.from_numpy(obs['z_batch']).float()
