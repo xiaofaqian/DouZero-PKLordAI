@@ -48,12 +48,15 @@ class GameEnv(object):
         self.bomb_num = 0
         
         self.last_pid = 'landlord'
+        
+        self.close_cards = []
 
     def card_play_init(self, card_play_data):
         self.info_sets['landlord'].player_hand_cards = \
             card_play_data['landlord']
         self.info_sets['farmer'].player_hand_cards = \
             card_play_data['farmer']
+        self.close_cards = card_play_data['close_cards']
         self.three_landlord_cards = card_play_data['three_landlord_cards']
         self.get_acting_player_position()
         self.game_infoset = self.get_infoset()
@@ -107,7 +110,7 @@ class GameEnv(object):
 
         self.last_move_dict[
             self.acting_player_position] = action.copy()
-        print(f"{self.acting_player_position} 当前手牌：{self.info_sets[self.acting_player_position].player_hand_cards} \n 出牌: {action}")
+        #print(f"{self.acting_player_position} 当前手牌：{self.info_sets[self.acting_player_position].player_hand_cards} \n 出牌: {action}")
         self.card_play_action_seq.append(action)
         self.update_acting_player_hand_cards(action)
 
@@ -305,6 +308,8 @@ class GameEnv(object):
                 self.info_sets[
                     self.acting_player_position].other_hand_cards += \
                     self.info_sets[pos].player_hand_cards
+        self.info_sets[self.acting_player_position].other_hand_cards += self.close_cards
+        self.info_sets[self.acting_player_position].other_hand_cards.sort()
 
         self.info_sets[self.acting_player_position].played_cards = \
             self.played_cards
